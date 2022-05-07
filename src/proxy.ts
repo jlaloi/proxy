@@ -25,23 +25,25 @@ server.register(FastifyHttpProxy, {
   },
   replyOptions: {
     onResponse: async (_, reply, res) => {
-      reply.removeHeader("Content-Length");
-      reply.send(
-        res.pipe(
-          new Transform({
-            transform: async function (chunk, _, done) {
-              const response = JSON.parse(chunk.toString());
-              const extraResponse = await dumbPromise("extra");
-              const newResponse = JSON.stringify({
-                ...response,
-                ...extraResponse,
-              });
-              this.push(newResponse);
-              done();
-            },
-          })
-        )
-      );
+      if (reply.getHeader("Content-Type") === "application/json") {
+        reply.removeHeader("Content-Length");
+        reply.send(
+          res.pipe(
+            new Transform({
+              transform: async function (chunk, _, done) {
+                const response = JSON.parse(chunk.toString());
+                const extraResponse = await dumbPromise("extra");
+                const newResponse = JSON.stringify({
+                  ...response,
+                  ...extraResponse,
+                });
+                this.push(newResponse);
+                done();
+              },
+            })
+          )
+        );
+      } else reply.send(res);
     },
   },
 });

@@ -1,5 +1,8 @@
 ### Server
 GET http://localhost:3000
 
-### Proxy
+### Proxy TEXT
 GET http://localhost:3001
+
+### Proxy JSON
+GET http://localhost:3001/api
