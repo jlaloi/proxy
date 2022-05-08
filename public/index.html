@@ -47,8 +47,9 @@
         socket.send(input.value);
         message.value = "";
       }
-      socket.addEventListener("message", (event) => {
-        messages.value += event.data + "\n";
+      socket.addEventListener("message", async (event) => {
+        const raw = event.data?.text ? await event.data.text() : event.data;
+        messages.value += `[${typeof event.data}] ${raw}\n`;
       });
     </script>
   </body>
