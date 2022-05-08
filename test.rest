@@ -6,3 +6,6 @@ GET http://localhost:3001
 
 ### Proxy JSON
 GET http://localhost:3001/api
+
+### Proxy stream
+GET http://localhost:3001/stream

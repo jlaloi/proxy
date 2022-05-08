@@ -1,18 +1,17 @@
 import crypto from "node:crypto";
 import { Transform } from "node:stream";
+import { setTimeout } from "node:timers/promises";
 
 import Fastify from "fastify";
 import FastifyHttpProxy from "@fastify/http-proxy";
 
-const dumbPromise = (attribute: string) =>
-  new Promise<Record<string, unknown>>((resolve) => {
-    setTimeout(() => {
-      resolve({
-        [attribute]: crypto.randomUUID(),
-        when: new Date(),
-      });
-    }, 1_000);
-  });
+const dumbPromise = async (attribute: string) => {
+  await setTimeout(1_000);
+  return {
+    [attribute]: crypto.randomUUID(),
+    when: new Date(),
+  };
+};
 
 const server = Fastify({ logger: true });
 
@@ -25,7 +24,7 @@ server.register(FastifyHttpProxy, {
   },
   replyOptions: {
     onResponse: async (_, reply, res) => {
-      if (reply.getHeader("Content-Type") === "application/json") {
+      if (reply.getHeader("Content-Type")?.includes("application/json")) {
         reply.removeHeader("Content-Length");
         reply.send(
           res.pipe(
