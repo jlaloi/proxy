@@ -26,7 +26,6 @@ server.get("/api", async (request, reply) =>
 
 server.get("/stream", async (_, reply) => {
   async function* render() {
-    yield "Hello";
     for (let i = 0; i < 5; i++) {
       await setTimeout(1_000);
       yield `${i + 1} second has passed\n`;
