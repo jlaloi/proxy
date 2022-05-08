@@ -18,6 +18,7 @@ const server = Fastify({ logger: true });
 server.register(FastifyHttpProxy, {
   upstream: "http://0.0.0.0:3000/",
   prefix: "/",
+  websocket: true,
   preHandler: async (request) => {
     const xUser = await dumbPromise("username");
     request.headers["X-User"] = JSON.stringify(xUser);

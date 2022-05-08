@@ -4,6 +4,8 @@
   "license": "MIT",
   "dependencies": {
     "@fastify/http-proxy": "^7.1.0",
+    "@fastify/static": "^5.0.2",
+    "@fastify/websocket": "^5.0.0",
     "fastify": "^3.29.0"
   },
   "devDependencies": {

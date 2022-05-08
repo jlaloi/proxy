@@ -1,11 +1,19 @@
 import { Readable } from "node:stream";
 import { setTimeout } from "node:timers/promises";
+import path from "node:path";
 
 import Fastify from "fastify";
+import FastifyStatic from "@fastify/static";
+import FastifyWebsocket from "@fastify/websocket";
 
 const server = Fastify({ logger: true });
 
-server.get("/", async (request, reply) =>
+server.register(FastifyStatic, {
+  root: path.join(__dirname, "../public"),
+  prefix: "/",
+});
+
+server.get("/text", async (request, reply) =>
   reply.send(request.headers["x-user"] || "No user")
 );
 
@@ -27,6 +35,20 @@ server.get("/stream", async (_, reply) => {
   const readable = Readable.from(render());
   reply.type("text/event-stream");
   reply.send(readable);
+});
+
+server.register(FastifyWebsocket);
+server.get("/ws", { websocket: true }, (connection, request) => {
+  const send = (message: string) =>
+    connection.socket.send(
+      `[${new Date().toLocaleTimeString()}] ${
+        request.headers["x-user"] || "No user"
+      }: ${message}`
+    );
+  connection.socket.on("message", (message: string) => {
+    send(message);
+  });
+  send("welcome");
 });
 
 server.listen(3000);

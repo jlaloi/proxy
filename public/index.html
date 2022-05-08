@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Test Proxy</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      textarea,
+      input {
+        display: block;
+        width: 32rem;
+        margin: 0.25rem;
+      }
+    </style>
+  </head>
+  <body>
+    <ul>
+      <li>
+        <a href="/text" target="_blank">Text</a>
+      </li>
+      <li>
+        <a href="/api" target="_blank">API</a>
+      </li>
+      <li>
+        <a href="/stream" target="_blank">Stream</a>
+      </li>
+    </ul>
+
+    <form onsubmit="send(event)">
+      <input type="text" id="message" placeholder="message" />
+      <textarea id="messages" readonly="true" rows="32"></textarea>
+    </form>
+    <script>
+      const input = document.getElementById("message");
+      const messages = document.getElementById("messages");
+
+      const socket = new WebSocket(`ws://${document.location.host}/ws`);
+      socket.addEventListener("open", () => {
+        messages.value = "";
+        input.value = "";
+        input.focus();
+      });
+
+      function send(event) {
+        event.preventDefault();
+        socket.send(input.value);
+        message.value = "";
+      }
+      socket.addEventListener("message", (event) => {
+        messages.value += event.data + "\n";
+      });
+    </script>
+  </body>
+</html>
